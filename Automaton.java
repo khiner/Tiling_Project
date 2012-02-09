@@ -5,24 +5,25 @@ import java.util.HashMap;
 import java.util.Collections;
 
 /*
- *  takes a pair of integers, converts them to binary strings, appends
- *  0's to make them the same length, and then feeds these strings to
- *  the following 2-automaton described by Jean-Paul Allouche and
- *  Olivier Salon:
- *  alphabet S = {a, b, c, d}, initial state = a
- *  4 maps from S to S: {(0, 0), (0, 1), (1, 0), (1, 1)}
+ *  Takes an integer argument and prints an nXn grid of automata outputs
+ *
+ *  This machine converts pairs of ints to binary strings,
+ *  appends 0's to make them the same length,
+ *  and then feeds these strings to the following 2-automaton
+ *  (described by Jean-Paul Allouche and Olivier Salon):
+ *  4 states:  S = {a, b, c, d}, initial state = a
+ *  ( in this code, a=0, b=1, c=2, d=3 )
+ *  4 transitions from S to S: {(0, 0), (0, 1), (1, 0), (1, 1)}
  *  output function tao, defined by: tao(a) = tao(d) = 0,
  *                                   tao(b) = tao(c) = 1
  */
 public class Automaton {
-    // aliases for the four states, so we can use them as array indices
-    public static final int a = 0, b = 1, c = 2, d = 3;
     // used like: int nextState = nextState[currState][symbol]
-    public static final int[][] nextState = {{0,1,1,2},
+    private static final int[][] nextState = {{0,1,1,2},
                                              {1,0,0,3},
                                              {1,2,2,3},
                                              {0,3,3,2}};
-    public static final int[] tao = {0,0,1,1};
+    private static final int[] tao = {0,0,1,1};
     private static final Map<String, Integer> transitions;
     static {
         Map<String, Integer> map = new HashMap<String, Integer>();
@@ -84,7 +85,7 @@ public class Automaton {
      * @return 1 or 0, the output of the automaton
      */
     public static int runAutomaton(String i, String j) {
-        int currState = a;
+        int currState = 0;
         for (int count = i.length() - 1; count >= 0; count--) {
             String transition = Character.toString(i.charAt(count)) +
                                 Character.toString(j.charAt(count));
