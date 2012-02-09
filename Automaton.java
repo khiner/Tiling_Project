@@ -34,22 +34,24 @@ public class Automaton {
     }
     
     public static void main(String[] args) {
-        // expects two integers as input
-        if (args.length != 2) {
-            System.out.println("Need one int arg for length.");
-            System.exit(1);
+        int n = 30;
+        if (args.length >= 1)
+            n = Integer.valueOf(args[0]);
+        for (int i = 0; i < n; ++i) {
+            for (int j = 0; j < n; ++j) {
+                String s1 = convertToBinaryString(i);
+                String s2 = convertToBinaryString(j);
+                // make strings the same length
+                while (s1.length() < s2.length()) {
+                    s1 = "0" + s1;
+                }
+                while (s2.length() < s1.length()) {
+                    s2 = "0" + s2;
+                }
+                System.out.print(runAutomaton(s1, s2));
+            }
+            System.out.print('\n');
         }
-        Integer.valueOf(args[0]);
-        String i = convertToBinaryString(Integer.valueOf(args[0]));
-        String j = convertToBinaryString(Integer.valueOf(args[1]));
-        // make strings the same length
-        while (i.length() < j.length()) {
-            i = "0" + i;
-        }
-        while (j.length() < i.length()) {
-            j = "0" + j;
-        }
-        System.out.println(runAutomaton(i, j));
     }
 
     /*
@@ -86,8 +88,6 @@ public class Automaton {
         for (int count = i.length() - 1; count >= 0; count--) {
             String transition = Character.toString(i.charAt(count)) +
                                 Character.toString(j.charAt(count));
-            System.out.println("Currstate = " + currState);
-            System.out.println("Transition = " + transition);
             currState = nextState[currState][transitions.get(transition)];
         }
         return tao[currState];
