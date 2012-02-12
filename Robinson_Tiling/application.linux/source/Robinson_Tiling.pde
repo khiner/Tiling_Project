@@ -1,3 +1,34 @@
+/*
+ * Generate the Robinson Tiling
+ * CS350, Winter 2012
+ * see http://en.wikipedia.org/wiki/Aperiodic_tiling for an explanation
+ * 
+ * This implementation emulates the Wolfram Demo Project at http://demonstrations.wolfram.com/RobinsonTiling/
+ * The code is very different from the implementation above, but the tile shape/color declarations are the same.
+ */
+ 
+import controlP5.*;
+
+/*
+ * Holds Tile info, and contains a draw method
+ */
+class Tile {
+  int[][] vertices;
+  color c;
+  public Tile(int[][] vertices, color c) {
+    this.vertices = vertices;
+    this.c = c;
+  }
+  void draw() {
+    fill(c);
+    beginShape();
+    for (int[] pos : vertices) {
+      vertex(pos[0]*8/dim, pos[1]*8/dim);
+    }
+    endShape(CLOSE);
+  }
+}
+
 Tile tile0 = new Tile(new int[][]{{-1, -6}, {0, -8}, {1, -6}, {5, -6}, {6, -5}, {6, -1}, {4, 0}, {6, 1}, {6, 5}, {5, 6}, {1, 6}, {0, 4}, {-1, 6}, {-5, 6}, {-6, 5}, {-6, 1}, {-4, 0}, {-6, -1}, {-6, -5}, {-5, -6}},
                       color(255, 120, 0));
 Tile tile1 = new Tile(new int[][]{{-1, -6}, {0, -8}, {1, -6}, {5, -6}, {6, -5}, {6, -1}, {4, -1}, {6, 1}, {6, 5}, {5, 6}, {1, 6}, {0, 4}, {-1, 6}, {-5, 6}, {-6, 5}, {-6, 1}, {-4, -1}, {-6, -1}, {-6, -5}, {-5, -6}},
@@ -14,11 +45,12 @@ Tile startTile = new Tile(new int[][]{{-1, -6}, {0, -8}, {1, -6}, {5, -6}, {6, -
                           color(122, 28, 143));
 Tile endTile = new Tile(new int[][]{{-1, -6}, {0, -8}, {1, -6}, {5, -6}, {6, -7}, {7, -6}, {6, -5}, {6, -1}, {8, -1}, {6, 1}, {6, 5}, {7, 6}, {6, 7}, {5, 6}, {1, 6}, {-1, 8}, {-1, 6}, {-5, 6}, {-6, 7}, {-7, 6}, {-6, 5}, {-6, 1}, {-8, 0}, {-6, -1}, {-6, -5}, {-7, -6}, {-6, -7}, {-5, -6}},
                         color(200));
+                        
+ControlP5 controlP5;
+DropdownList sizeList;
 List<Tile> tiles = new ArrayList<Tile>();
 int sz = 512;
-int order = 3;
-int n = 1 << order;
-int t = 3*(1 << 5 - order);
+int dim, stepLength;
 int[][] corners = {{-1,1}, {1,1}, {1,-1}, {-1,-1}};
 int[][] sides = {{-1,0}, {0,1},{1,0},{0,-1}};
 float[] rotates = {-HALF_PI, PI, HALF_PI, 0};
@@ -26,8 +58,6 @@ int[] tileIndices = {1,5,3,1};
 
 void setup() {
   size(sz, sz);
-  stroke(0);
-  strokeWeight(2);
   tiles.add(tile0);
   tiles.add(tile1);
   tiles.add(tile2);
@@ -36,48 +66,74 @@ void setup() {
   tiles.add(tile5);
   tiles.add(startTile);
   tiles.add(endTile);
-  noLoop();
+  controlP5 = new ControlP5(this);
+  setupSizeList();
+  setLengthVars(3);
 }  
 
 void draw() {
   background(255);
+  stroke(0);
+  strokeWeight(2);
+  fill(0); // fill black for text
+  text("size", 5, 20);
+  pushMatrix();
   translate(sz/2, sz/2);
   rotate(-HALF_PI);
-  drawTiles(n);
+  drawTiles(dim);
+  popMatrix();
 }
 
-void drawTiles(int i) {
-  if (i == 1) {
-    startTile.draw();
+void setLengthVars(int o) {
+  dim = 1 << o;
+  stepLength = 3*(1 << 5 - o);
+}
+
+void setupSizeList() {
+  sizeList = controlP5.addDropdownList("sizeList", 30, 25, 30, 15*6);
+  sizeList.setBarHeight(15);
+  sizeList.setItemHeight(15);
+  sizeList.addItem("3", 0);
+  sizeList.addItem("7", 1);
+  sizeList.addItem("15", 2);
+  sizeList.addItem("31", 3);
+  sizeList.addItem("63", 4);
+  sizeList.setLabel("31");
+  sizeList.captionLabel().style().marginTop = 3;
+  sizeList.captionLabel().style().marginLeft = 5;
+}
+
+void drawTiles(int n) {
+  startTile.draw();
+  if (n == 1) {
     for (int j = 0; j < corners.length; ++j) {
       pushMatrix();
-      translate(t*corners[j][0], t*corners[j][1]);
+      translate(stepLength*corners[j][0], stepLength*corners[j][1]);
       rotate(rotates[j]);
       endTile.draw();
       popMatrix();
     }
     for (int j = 0; j < sides.length; ++j) {
       pushMatrix();
-      translate(t*sides[j][0], t*sides[j][1]);
+      translate(stepLength*sides[j][0], stepLength*sides[j][1]);
       rotate(rotates[j]);
       tiles.get(tileIndices[j]).draw();
       popMatrix();
     }
   } else {
-    startTile.draw();
     for (int j = 0; j < corners.length; ++j) {
       pushMatrix();
-      translate(t*i*corners[j][0], t*i*corners[j][1]);
+      translate(stepLength*n*corners[j][0], stepLength*n*corners[j][1]);
       rotate(rotates[j]);
-      drawTiles(i/2);
+      drawTiles(n/2);
       popMatrix();
     }
     for (int j = 0; j < sides.length; ++j) {
-      for (int k = 1; k < i*2; ++k) {
+      for (int k = 1; k < n*2; ++k) {
         pushMatrix();
-        translate(t*sides[j][0]*k, t*sides[j][1]*k);
+        translate(stepLength*sides[j][0]*k, stepLength*sides[j][1]*k);
         rotate(rotates[j]);
-        if (k == i) {
+        if (k == n) {
           if (j == 0 || j == 3)
             tiles.get(1).draw();
           else if (j == 2)
@@ -95,23 +151,17 @@ void drawTiles(int i) {
         popMatrix();
       }
     }
-  }
-  
+  } 
 }
 
-class Tile {
-  int[][] vertices;
-  color c;
-  public Tile(int[][] vertices, color c) {
-    this.vertices = vertices;
-    this.c = c;
-  }
-  void draw() {
-    fill(c);
-    beginShape();
-    for (int[] pos : vertices) {
-      vertex(pos[0]*8/n, pos[1]*8/n);
-    }
-    endShape(CLOSE);
+/*
+ * This method is needed to recognize events from the
+ * 'sizeList' DropdownList
+ */
+public void controlEvent(ControlEvent e) {
+  // if we don't use this check, ControlP5 throws an exception
+  if (e.isGroup()) {
+    // set the new size
+    setLengthVars((int)e.group().getValue());
   }
 }
