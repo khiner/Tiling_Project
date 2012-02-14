@@ -3,6 +3,9 @@ import java.lang.StringBuilder;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Collections;
+import java.awt.Color;
+import java.util.Random;
+import java.awt.*;
 
 /*
  *  Takes an integer argument and prints an nXn grid of automata outputs
@@ -19,25 +22,43 @@ import java.util.Collections;
  */
 public class Automaton {
     // used like: int nextState = nextState[currState][symbol]
-    private static final int[][] nextState = {{0,1,1,2},
+    private final int[][] nextState = {{0,1,1,2},
                                              {1,0,0,3},
                                              {1,2,2,3},
                                              {0,3,3,2}};
-    private static final int[] tao = {0,0,1,1};
-    private static final Map<String, Integer> transitions;
-    static {
-        Map<String, Integer> map = new HashMap<String, Integer>();
-        map.put("00", 0);
-        map.put("01", 1);
-        map.put("10", 2);
-        map.put("11", 3);
-        transitions = Collections.unmodifiableMap(map);
-    }
-    
+    private final int[] tao = {0,1,1,0};
+    private Map<String, Integer> transitions;
+    private Map<String, Color> colors;
+    private int[][] binaryGrid;
+    private Color[][] colorGrid;
+    private Random random = new Random();
+                
     public static void main(String[] args) {
         int n = 30;
         if (args.length >= 1)
             n = Integer.valueOf(args[0]);
+        Automaton automaton= new Automaton(n);
+        Renderer renderer = new Renderer(automaton);
+    }
+
+    public Automaton(int n) {
+        transitions = new HashMap<String, Integer>();
+        colors = new HashMap<String, Color>();        
+        transitions.put("00", 0);
+        transitions.put("01", 1);
+        transitions.put("10", 2);
+        transitions.put("11", 3);
+        for (int i = 0; i < 2; ++i)
+            for (int j = 0; j < 2; ++j)
+                for (int k = 0; k < 2; ++k)
+                    for (int l = 0; l < 2; ++l) {
+                        colors.put(new String(String.valueOf(i) +
+                                              String.valueOf(j) +
+                                              String.valueOf(k) +
+                                              String.valueOf(l)),
+                                   new Color(random.nextInt(16777216)));
+                    }
+        binaryGrid = new int[n][n];
         for (int i = 0; i < n; ++i) {
             for (int j = 0; j < n; ++j) {
                 String s1 = convertToBinaryString(i);
@@ -49,12 +70,11 @@ public class Automaton {
                 while (s2.length() < s1.length()) {
                     s2 = "0" + s2;
                 }
-                System.out.print(runAutomaton(s1, s2));
+                binaryGrid[i][j] = runAutomaton(s1, s2);
             }
-            System.out.print('\n');
-        }
+        }        
+        createColorGrid();        
     }
-
     /*
      * @return a binary string representing the decimal number provided
      * @param n - the number to convert
@@ -84,7 +104,7 @@ public class Automaton {
      * @param i, j - the input strings for the automaton.
      * @return 1 or 0, the output of the automaton
      */
-    public static int runAutomaton(String i, String j) {
+    public int runAutomaton(String i, String j) {
         int currState = 0;
         for (int count = i.length() - 1; count >= 0; count--) {
             String transition = Character.toString(i.charAt(count)) +
@@ -92,5 +112,22 @@ public class Automaton {
             currState = nextState[currState][transitions.get(transition)];
         }
         return tao[currState];
+    }
+
+    public void createColorGrid() {
+        colorGrid = new Color[binaryGrid.length/2][binaryGrid.length/2];
+        for (int i = 0; i < colorGrid.length; ++i) {
+            for (int j = 0; j < colorGrid.length; ++j) {
+                String key = new String(String.valueOf(binaryGrid[i*2][j*2]) +
+                                        String.valueOf(binaryGrid[i*2 + 1][j*2]) +
+                                        String.valueOf(binaryGrid[i*2 + 1][j*2]) +
+                                        String.valueOf(binaryGrid[i*2 + 1][j*2 + 1]));
+                colorGrid[i][j] = colors.get(key);
+            }
+        }
+    }
+
+    public Color[][] getColorGrid() {
+        return colorGrid;
     }
 }
