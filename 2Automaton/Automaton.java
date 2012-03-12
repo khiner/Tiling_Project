@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.Collections;
 import java.awt.Color;
 import java.util.Random;
-import java.awt.*;
 
 /*
  *  Takes an integer argument and prints an nXn grid of automata outputs
