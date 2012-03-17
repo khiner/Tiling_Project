@@ -1,10 +1,18 @@
 This project consists of three main parts:
-1) 2Automaton
-    - A 2D finite automaton which follows the transition rules Jean-Paul 
-      Allouche and Olivier Salon at:
-      http://web.cecs.pdx.edu/~york/cs350/cs350.html.
+2Automaton, RobinsonTiling, and Quasicrystals
 
-      Here is an outline of Automaton.java:
+1) 2Automaton
+
+    A 2D finite automaton which follows the transition rules Jean-Paul 
+    Allouche and Olivier Salon at:
+    http://web.cecs.pdx.edu/~york/cs350/cs350.html.
+
+    Run instructions:
+       $ cd 2Automaton
+       $ javac Automaton.java
+       $ ./Automaton
+
+    Here is an outline of Automaton.java:
 
     1.1) Create an nXn grid (where n is user-input) of integer pairs ordered
     from left to right and from top to bottom.  For example, if n = 4,
@@ -50,3 +58,32 @@ This project consists of three main parts:
     1.6) Map each square group of four bits to one of 16 colors, and print
     the resulting grid of colors.
 
+2) RobinsonTiling
+    
+    This project uses <a href="http://processing.org">Processing</a>, a
+    Java graphics environment, to recursively generate the Robinson Tiling.
+
+    This implementation emulates the style of  
+    <a href="http://demonstrations.wolfram.com/RobinsonTiling/">this
+    Wolfram Demo Project</a>.
+
+    The Robinson Tiling uses 6 unique tiles whose shape enforces a unique
+    arrangement.  Using rotations and reflections, the tiles can be 
+    "pieced together" following the "rules" that are given by the tiles'
+    shapes.  Other indications of allowed placement could alternatively
+    be used, such as a color and/or shape pattern to indicate allowed
+    neighbors.
+
+    In RobinsonTiling.pde, eight tiles are hard-coded, but two of these
+    are reflections.  The implementation begins with startTile in the
+    center, and recursively draws the rotated versions of startTile to
+    each of its four corners, followed by the tiles in the N, S, E and W
+    directions of these corner startTiles, appropriately rotated/reflected.
+    Finally, the remaining tiles along the NS and EW axes are filled with
+    the tiles that "fit" in the spaces.
+
+    The size of the grid can be changed using the 'size' dropdown.
+
+3) Quasicrystals
+    
+    

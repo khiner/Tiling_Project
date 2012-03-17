@@ -4,8 +4,9 @@
  * CS350, Winter 2012
  * see http://en.wikipedia.org/wiki/Aperiodic_tiling for an explanation
  * 
- * This implementation emulates the Wolfram Demo Project at http://demonstrations.wolfram.com/RobinsonTiling/
- * The code is very different from the implementation above, but the tile shape/color declarations are the same.
+ * This implementation emulates the style of  
+ * <a href="http://demonstrations.wolfram.com/RobinsonTiling/">this
+    Wolfram Demo Project</a>.
  */
  
 import controlP5.*;
