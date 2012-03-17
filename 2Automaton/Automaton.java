@@ -22,9 +22,9 @@ import java.util.Random;
 public class Automaton {
     // used like: int nextState = nextState[currState][symbol]
     private final int[][] nextState = {{0,1,1,2},
-                                             {1,0,0,3},
-                                             {1,2,2,3},
-                                             {0,3,3,2}};
+                                       {1,0,0,3},
+                                       {1,2,2,3},
+                                       {0,3,3,2}};
     private final int[] tao = {0,1,1,0};
     private Map<String, Integer> transitions;
     private Map<String, Color> colors;
@@ -41,6 +41,7 @@ public class Automaton {
     }
 
     public Automaton(int n) {
+        // map string to integer to use as a symbol for next state
         transitions = new HashMap<String, Integer>();
         colors = new HashMap<String, Color>();        
         transitions.put("00", 0);
