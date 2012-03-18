@@ -123,8 +123,7 @@ void setLengthVars(int p) {
 void setupControllers() {
   sizeList = controlP5.addDropdownList("sizeList", 455, 45, 30, 15*6)
                       .setBarHeight(15)
-                      .setItemHeight(15)
-                      .setLabel("31");
+                      .setItemHeight(15);
   sizeList.addItem("3", 0);
   sizeList.addItem("7", 1);
   sizeList.addItem("15", 2);
@@ -136,7 +135,7 @@ void setupControllers() {
                             .setNumberOfTickMarks(31*31)
                             .setLabel("")
                             .snapToTickMarks(true);
-                            
+  sizeList.setValue(3);
   Button play = controlP5.addButton("play", 1, 15, 25, 30, 20);
 }
 
