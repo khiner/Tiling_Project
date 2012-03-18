@@ -83,10 +83,13 @@ This project consists of three main parts:
     center, and recursively draws the rotated versions of startTile to
     each of its four corners, followed by the tiles in the N, S, E and W
     directions of these corner startTiles, appropriately rotated/reflected.
-    Finally, the remaining tiles along the NS and EW axes are filled with
+    Finally, the remaining tiles along the N-S and E-W axes are filled with
     the tiles that "fit" in the spaces.
 
-    The size of the grid can be changed using the 'size' dropdown.
+    -The size of the grid can be changed using the 'size' dropdown.
+    -The number of tiles to draw can be controlled with the slider or
+     the arrow keys.
+    -The Play button automates the drawing of the tiles - Wee!
 
 3) Quasicrystals
     
